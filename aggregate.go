@@ -166,6 +166,8 @@ func logisticPooling(inputs []ThreePointEstimate) ([]float64, float64, float64) 
 	return pooledBasis, minPoint, maxPoint
 }
 
+
+// constructInputBases takes the set of three point estimates as an input and returns 
 func constructInputBases(inputs []ThreePointEstimate) ([][]float64, float64, float64) {
 
 	inputBases := [][]float64{}
@@ -192,10 +194,15 @@ func constructInputBases(inputs []ThreePointEstimate) ([][]float64, float64, flo
 	return inputBases, minPoint, maxPoint
 }
 
+
+// determineOutputRange is used to dynamically size the range of x values depending on data provided
+// using a conservative estimate of 8 standard deviations below and above the mean 
 func determineOutputRange(inputs []ThreePointEstimate) (float64, float64) {
 	minPoint := computeMean(inputs[0]) - 8 * computeStdDev(inputs[0])
 	maxPoint := computeMean(inputs[0]) + 8 * computeStdDev(inputs[0])
 
+	// essentially here we are just taking the smallest minPoint and using the range from that input distribution
+	// this is quick and dirty and may be optimized later
 	for i := 1; i < len(inputs); i++ {
 		mean := computeMean(inputs[i])
 		std := computeStdDev(inputs[i])
@@ -212,6 +219,7 @@ func determineOutputRange(inputs []ThreePointEstimate) (float64, float64) {
 	return minPoint, maxPoint
 }
 
+// plotDistribution plots a single distribution "points" and uses minPoint and maxPoint to determine the x values
 func plotDistribution(points []float64, minPoint float64, maxPoint float64) {
 	p := plot.New()
 
