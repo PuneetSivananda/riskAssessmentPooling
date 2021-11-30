@@ -233,7 +233,7 @@ func plotDistribution(points []float64, minPoint float64, maxPoint float64) {
 
     p.Add(s)
 
-    if err := p.Save(4*vg.Inch, 4*vg.Inch, "points.png"); err != nil {
+    if err := p.Save(6*vg.Inch, 6*vg.Inch, "distribution.png"); err != nil {
 		panic(err)
 	}
 }
