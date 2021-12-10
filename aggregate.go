@@ -224,15 +224,19 @@ func determineOutputRange(inputs []ThreePointEstimate) (float64, float64) {
 func returnBase64(data []byte) string {
 	img, err := png.Decode(bytes.NewReader(data))
 	if err != nil {
-		fmt.Printf("unable to decode jpeg: %w", err)
+		fmt.Printf("unable to decode png: %w", err)
 	}
 
 	var buf bytes.Buffer
 	if err := png.Encode(&buf, img); err != nil {
 		fmt.Printf("unable to encode png: %w", err)
 	}
+
 	data = buf.Bytes()
+
 	imgBase64Str := base64.StdEncoding.EncodeToString(data)
+
+	//TOOD: check if the baseString is a valid base64 encoded string
 	return imgBase64Str
 }
 
