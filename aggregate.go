@@ -233,7 +233,6 @@ func returnBase64(data []byte) string {
 	}
 	data = buf.Bytes()
 	imgBase64Str := base64.StdEncoding.EncodeToString(data)
-	fmt.Println(imgBase64Str)
 	return imgBase64Str
 }
 
