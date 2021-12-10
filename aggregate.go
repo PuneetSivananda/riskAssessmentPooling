@@ -1,8 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"encoding/base64"
 	"fmt"
+	"image/png"
+	"io/ioutil"
+	"log"
 	"math"
+	"os"
 
 	"gonum.org/v1/gonum/stat/distuv"
 	"gonum.org/v1/plot"
@@ -214,6 +220,23 @@ func determineOutputRange(inputs []ThreePointEstimate) (float64, float64) {
 	return minPoint, maxPoint
 }
 
+// returns the base64 image from a give plot of points
+func returnBase64(data []byte) string {
+	img, err := png.Decode(bytes.NewReader(data))
+	if err != nil {
+		fmt.Printf("unable to decode jpeg: %w", err)
+	}
+
+	var buf bytes.Buffer
+	if err := png.Encode(&buf, img); err != nil {
+		fmt.Printf("unable to encode png: %w", err)
+	}
+	data = buf.Bytes()
+	imgBase64Str := base64.StdEncoding.EncodeToString(data)
+	fmt.Println(imgBase64Str)
+	return imgBase64Str
+}
+
 // plotDistribution plots a single distribution "points" and uses minPoint and maxPoint to determine the x values
 func plotDistribution(points []float64, minPoint float64, maxPoint float64) {
 	p := plot.New()
@@ -226,8 +249,6 @@ func plotDistribution(points []float64, minPoint float64, maxPoint float64) {
 		pts[i].Y = points[i]
 	}
 
-	fmt.Println(pts)
-
 	s, err := plotter.NewScatter(pts)
 
 	if err != nil {
@@ -239,4 +260,16 @@ func plotDistribution(points []float64, minPoint float64, maxPoint float64) {
 	if err := p.Save(6*vg.Inch, 6*vg.Inch, "distribution.png"); err != nil {
 		panic(err)
 	}
+
+	// decode image to base64
+	data, err := ioutil.ReadFile("distribution.png")
+	if err != nil {
+		log.Println(err)
+		os.Remove("distribution.png")
+	}
+
+	imgStr := returnBase64(data)
+	fmt.Println(imgStr)
+	//Remove image from mem and cleanup
+	os.Remove("distribution.png")
 }
